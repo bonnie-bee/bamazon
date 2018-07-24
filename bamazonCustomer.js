@@ -20,11 +20,12 @@ connection.connect(function (err) {
 
 //function to list the products
 function listProducts() {
-    connection.query("SELECT * FROM products", function (err, res) {
+    connection.query("SELECT * FROM products ORDER BY department_name", function (err, res) {
+        if (err) throw err;
         console.log("\n-----------------------------------");
         for (var i = 0; i < res.length; i++) {
             
-            console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].price);
+            console.log(`${res[i].item_id} | ${res[i].product_name} | ${res[i].price}`);
         }
         console.log("-----------------------------------");
     });
