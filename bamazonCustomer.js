@@ -16,7 +16,6 @@ const connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
-    listProducts();
     wantToBuy();
 });
 
@@ -32,6 +31,7 @@ function listProducts() {
 
   //function to ask the user what they want to buy and how many
   function wantToBuy() {
+    listProducts();
       //prompts to ask what the user wants
       inquirer.prompt([
         {type:'input',
@@ -47,9 +47,26 @@ function listProducts() {
           let amount = inqRes.prodAmount
         connection.query(`SELECT * FROM products WHERE item_id = ${wanted};`, function(err, res) {
             if (err) throw err;
+            let price=res[0].price;
             let stock = res[0].stock_quantity
             console.log(res)
             console.log(stock)
+
+            //amount is less than or equal to stock
+            //remove amount from stock on the database
+            //sum the amount the person will pay
+            //log the amount
+        //amount is more than the stock
+            //log that there's insufficient stock (maybe say how much stock there is)
+
+        if (amount <= stock) {
+            console.log(`amount owed: ${amount*price}`)
+            connection.query(`UPDATE products SET stock_quantity = ${stock-amount} WHERE item_id = ${wanted};`, function (err, res) {
+                if(err) throw err;
+                console.log(res)
+            });
+            
+        }
             
         })
           //check to see amount the store has
